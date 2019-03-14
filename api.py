@@ -53,27 +53,73 @@ def api_status():
 def api_status_clean():
     return 'running!'
 
-
-@api.route(path + '/mysql', methods=['GET'])
-def api_mysql_stat():
+def _api_getmysqlconn():
     domain = config['mysql']['hostname']
     username = config['mysql']['user']
     password = config['mysql']['password']
     database = config['mysql']['database']
     port = config['mysql']['port']
-    connection = pymysql.connect(host=domain, user=username, password=password,
-                                 db=database, port=port, ssl=None,
-                                 cursorclass=pymysql.cursors.DictCursor,
-                                 charset='utf8mb4', autocommit=True)
+    return pymysql.connect(host=domain, user=username, password=password,
+                           db=database, port=port, ssl=None,
+                           cursorclass=pymysql.cursors.DictCursor,
+                           charset='utf8mb4', autocommit=True)
 
-    with connection.cursor() as cursor:
+
+@api.route(path + '/mysql', methods=['GET'])
+def api_mysql_stat():
+    conn = _api_getmysqlconn()
+    with conn.cursor() as cursor:
         cursor.execute('SELECT 1 as `FIRST VALUE`, 2 as `SECOND VALUE`, UNIX_TIMESTAMP() AS `TIME`')
         read_data = cursor.fetchall()
 
-    connection.close()
+    conn.close()
     return json.dumps(read_data)
+
+
+@api.route(path + "/voter/byname/<string:name>", methods=['GET'])
+def voter_byname(name: str):
+    query = "SELECT * FROM voters WHERE name LIKE %(voter name)s"
+    params = {'voter name': name}
+
+    conn = _api_getmysqlconn()
+    with conn.cursor() as cursor:
+        cursor.execute(query, params)
+        read_data = cursor.fetchall()
+
+    conn.close()
+
+    return json.dumps(read_data, separators=(',', ':'))
+
+
+@api.route(path + "/voter/byvoter/<int:voterid>", methods=['GET'])
+def voter_byvoterid(voterid: int):
+    query = "SELECT * FROM voters WHERE voter_number = %(voter number)s"
+    params = {'voter number': voterid}
+
+    conn = _api_getmysqlconn()
+    with conn.cursor() as cursor:
+        cursor.execute(query, params)
+        read_data = cursor.fetchall()
+
+    conn.close()
+
+    return json.dumps(read_data, separators=(',', ':'))
+
+
+@api.route(path + "/voter/byid/<int:uid>", methods=['GET'])
+def voter_byid(uid: int):
+    query = "SELECT * FROM voters WHERE id = %(id)s"
+    params = {'id': uid}
+
+    conn = _api_getmysqlconn()
+    with conn.cursor() as cursor:
+        cursor.execute(query, params)
+        read_data = cursor.fetchall()
+
+    conn.close()
+
+    return json.dumps(read_data, separators=(',', ':'))
 
 
 if __name__ == "__main__":
     api.run()
-    
