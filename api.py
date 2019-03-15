@@ -66,15 +66,6 @@ def _api_getmysqlconn():
                            charset='utf8mb4', autocommit=True)
 
 
-@api.route(path + '/mysql', methods=['GET'])
-def api_mysql_stat():
-    username = request.args.get('username')
-    password = request.form['password']
-    print(request.form)
-    print(request.args)
-    return json.dumps(request.args)
-
-
 @api.route(path + '/voters', methods=['GET'])
 def voters():
     try:
