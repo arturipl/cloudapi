@@ -77,7 +77,10 @@ def api_mysql_stat():
 
 @api.route(path + '/voters', methods=['GET'])
 def voters():
-    page = request.args.get('page')
+    try:
+        page = int(request.args.get('page'))
+    except TypeError as ee:
+        raise
     count = 100
 
     query = "SELECT * FROM voters LIMIT %(start)s, %(count)s"
