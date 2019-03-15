@@ -68,13 +68,35 @@ def _api_getmysqlconn():
 
 @api.route(path + '/mysql', methods=['GET'])
 def api_mysql_stat():
+    username = request.args.get('username')
+    password = request.form['password']
+    print(request.form)
+    print(request.args)
+    return json.dumps(request.args)
+
+
+@api.route(path + '/voters', methods=['GET'])
+def voters():
+    page = request.args.get('page')
+    count = 100
+
+    query = "SELECT * FROM voters LIMIT %(start)s, %(count)s"
+    params = {'start': page * count, 'count': count}
+
+    dataset = {'meta': {'handled_id': request.host}}
+
     conn = _api_getmysqlconn()
     with conn.cursor() as cursor:
-        cursor.execute('SELECT 1 as `FIRST VALUE`, 2 as `SECOND VALUE`, UNIX_TIMESTAMP() AS `TIME`')
-        read_data = cursor.fetchall()
+        records = cursor.execute(query, params)
+        dataset['meta']['records_on_data'] = records
+
+        if records:
+            dataset['result'] = cursor.fetchall()
+        else:
+            dataset['msg'] = 'not found'
 
     conn.close()
-    return json.dumps(read_data)
+    return json.dumps(dataset, separators=(',', ':'))
 
 
 @api.route(path + "/voter/byname/<string:name>", methods=['GET'])
