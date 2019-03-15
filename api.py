@@ -93,10 +93,22 @@ def voters():
     return json.dumps(dataset, separators=(',', ':'))
 
 
-@api.route(path + "/voter/byname/<string:name>", methods=['GET'])
-def voter_byname(name: str):
-    query = "SELECT * FROM voters WHERE name LIKE %(voter name)s"
-    params = {'voter name': name}
+@api.route(path + "/voters/name", methods=['GET'])
+def voter_byname():
+    param_equal = request.args.get('equal')
+    param_start = request.args.get('start')
+    param_include = request.args.get('include')
+
+    query = "SELECT * FROM voters WHERE name LIKE %(name)s"
+
+    if param_equal:
+        params = {'name': param_equal}
+    elif param_start:
+        params = {'name': param_start + '%'}
+    elif param_include:
+        params = {'name': '%' + param_include + '%'}
+    else:
+        raise AssertionError('equals, start or include need to be informed')
 
     dataset = {'meta': {'handled_id': request.host}}
 
@@ -115,10 +127,10 @@ def voter_byname(name: str):
     return json.dumps(dataset, separators=(',', ':'))
 
 
-@api.route(path + "/voter/bysection/<int:section>/<int:limit>", methods=['GET'])
-def voter_bysection(section: int, limit: int):
+@api.route(path + "/sections/<int:section>", methods=['GET'])
+def voter_bysection(section: int):
     query = "SELECT * FROM voters WHERE section = %(section)s LIMIT %(limit)s"
-    params = {'section': section, 'limit': limit}
+    params = {'section': section, 'limit': 1000}
 
     dataset = {'meta': {'handled_id': request.host}}
 
@@ -128,7 +140,7 @@ def voter_bysection(section: int, limit: int):
         dataset['meta']['records_on_data'] = records
 
         if records:
-            dataset['result'] = cursor.fetchall()[0]
+            dataset['result'] = cursor.fetchall()
         else:
             dataset['msg'] = 'not found'
 
@@ -198,7 +210,7 @@ def voters_reset():
     return json.dumps(dataset, separators=(',', ':'))
 
 
-@api.route(path + "/voter/byvoter/<int:voterid>", methods=['GET'])
+@api.route(path + "/voter/voter_number/<int:voterid>", methods=['GET'])
 def voter_byvoter(voterid: int):
     query = "SELECT * FROM voters WHERE voter_number = %(voter number)s"
 
@@ -221,7 +233,7 @@ def voter_byvoter(voterid: int):
     return json.dumps(dataset, separators=(',', ':'))
 
 
-@api.route(path + "/voter/byid/<int:uid>", methods=['GET'])
+@api.route(path + "/voters/<int:uid>", methods=['GET'])
 def voter_byid(uid: int):
     query = "SELECT * FROM voters WHERE id = %(id)s"
 
