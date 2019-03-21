@@ -214,7 +214,7 @@ def voters_reset():
     return json.dumps(dataset, separators=(',', ':'))
 
 
-@api.route(path + "/voter/voter_number/<int:voterid>", methods=['GET'])
+@api.route(path + "/voters/voter_number/<int:voterid>", methods=['GET'])
 def voter_byvoter(voterid: int):
     query = "SELECT * FROM voters WHERE voter_number = %(voter number)s"
 
