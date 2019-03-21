@@ -6,7 +6,7 @@ from flask import request
 
 api = Flask(__name__)
 
-path = "/api/v{version}".format(**{'version': 1.0})
+path = '' #'"/api/v{version}".format(**{'version': 1.0})
 
 config = {
     'mysql':
