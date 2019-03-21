@@ -10,10 +10,10 @@ path = "/api/v{version}".format(**{'version': 1.0})
 
 config = {
     'mysql':
-        {'user': 'cloud',
+        {'user': 'voter',
          'password': 'L3ir142019()',
          'database': 'meicm-1819-cn',
-         'hostname': '52.15.129.99',
+         'hostname': 'ec2-35-180-196-29.eu-west-3.compute.amazonaws.com',
          'port': 3306,
          },
     'logging dir': '/tmp/'
