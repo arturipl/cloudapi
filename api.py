@@ -220,7 +220,7 @@ def voter_byvoter(voterid: int):
 
     params = {'voter number': voterid}
 
-    dataset = {'meta': {'handled_by': dict(request.environ)}}
+    dataset = {'meta': {'handled_by': request.host}}
 
     conn = _api_getmysqlconn()
     with conn.cursor() as cursor:
