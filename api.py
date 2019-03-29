@@ -103,7 +103,7 @@ def voter_byname():
     param_start = request.args.get('start')
     param_include = request.args.get('include')
 
-    query = "SELECT * FROM voters WHERE name LIKE %(name)s"
+    query = "SELECT * FROM voters WHERE name LIKE %(name)s LIMIT 1000"
 
     if param_equal:
         params = {'name': param_equal}
@@ -239,6 +239,10 @@ def voter_byvoter(voterid: int):
 
 @api.route(path + "/voters/<int:uid>", methods=['GET'])
 def voter_byid(uid: int):
+    if uid is None:
+        uid = 0
+    else:
+        uid -= 1 # starts from page 0
     query = "SELECT * FROM voters WHERE id = %(id)s"
 
     params = {'id': uid}
