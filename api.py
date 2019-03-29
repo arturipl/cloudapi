@@ -247,7 +247,7 @@ def voter_byid(uid: int):
 
     params = {'id': uid}
 
-    dataset = {'meta': {'handled_by': request.host}}
+    dataset = {'meta': {'handled_by': request.environ['SERVER_NAME']}}
 
     conn = _api_getmysqlconn()
     with conn.cursor() as cursor:
