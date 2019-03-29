@@ -77,7 +77,7 @@ def voters():
     query = "SELECT * FROM voters LIMIT %(start)s, %(count)s"
     params = {'start': page * count, 'count': count}
 
-    dataset = {'meta': {'handled_by': request.host}}
+    dataset = {'meta': {'handled_by': request.environ['SERVER_NAME']}}
     extra_data = {'current_page': page, 'total': 1000000, 'per_page': count, 'lastpage': 100000}
 
     conn = _api_getmysqlconn()
@@ -114,7 +114,7 @@ def voter_byname():
     else:
         raise AssertionError('equals, start or include need to be informed')
 
-    dataset = {'meta': {'handled_by': request.host}}
+    dataset = {'meta': {'handled_by': request.environ['SERVER_NAME']}}
 
     conn = _api_getmysqlconn()
     with conn.cursor() as cursor:
@@ -136,7 +136,7 @@ def voter_bysection(section: int):
     query = "SELECT * FROM voters WHERE section = %(section)s LIMIT %(limit)s"
     params = {'section': section, 'limit': 1000}
 
-    dataset = {'meta': {'handled_by': request.host}}
+    dataset = {'meta': {'handled_by': request.environ['SERVER_NAME']}}
 
     conn = _api_getmysqlconn()
     with conn.cursor() as cursor:
@@ -157,7 +157,7 @@ def voter_bysection(section: int):
 def voter_sections():
     query = "SELECT count(id) AS `total`, section FROM voters GROUP BY section"
 
-    dataset = {'meta': {'handled_by': request.host}}
+    dataset = {'meta': {'handled_by': request.environ['SERVER_NAME']}}
 
     conn = _api_getmysqlconn()
     with conn.cursor() as cursor:
@@ -177,7 +177,7 @@ def voters_setvote(voter_id: int):
 
     param = {'voter id': voter_id}
 
-    dataset = {'meta': {'handled_by': request.host}}
+    dataset = {'meta': {'handled_by': request.environ['SERVER_NAME']}}
 
     conn = _api_getmysqlconn()
     with conn.cursor() as cursor:
@@ -202,7 +202,7 @@ def voters_setvote(voter_id: int):
 def voters_reset():
     query_update = "UPDATE voters SET has_voted = 0 WHERE has_voted = 1"
 
-    dataset = {'meta': {'handled_by': request.host}}
+    dataset = {'meta': {'handled_by': request.environ['SERVER_NAME']}}
 
     conn = _api_getmysqlconn()
     with conn.cursor() as cursor:
@@ -220,7 +220,7 @@ def voter_byvoter(voterid: int):
 
     params = {'voter number': voterid}
 
-    dataset = {'meta': {'handled_by': request.host}}
+    dataset = {'meta': {'handled_by': request.environ['SERVER_NAME']}}
 
     conn = _api_getmysqlconn()
     with conn.cursor() as cursor:
