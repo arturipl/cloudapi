@@ -69,9 +69,9 @@ def _api_getmysqlconn():
 @api.route(path + '/voters', methods=['GET'])
 def voters():
     try:
-        page = int(request.args.get('page'))
+        page = int(request.args.get('page')) - 1
     except TypeError as ee:
-        raise
+        page = 0
     count = 100
 
     query = "SELECT * FROM voters LIMIT %(start)s, %(count)s"
@@ -239,10 +239,6 @@ def voter_byvoter(voterid: int):
 
 @api.route(path + "/voters/<int:uid>", methods=['GET'])
 def voter_byid(uid: int):
-    if uid is None:
-        uid = 0
-    else:
-        uid -= 1 # starts from page 0
     query = "SELECT * FROM voters WHERE id = %(id)s"
 
     params = {'id': uid}
